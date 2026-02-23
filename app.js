@@ -11,7 +11,7 @@ app.get("/", (req, res) => {
 });
 
 app.post("/hash", (req, res) => {
-  const crypto = require("crypto");
+ 
 
   const data = req.body.data;
 
