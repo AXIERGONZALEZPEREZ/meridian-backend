@@ -11,19 +11,28 @@ app.get("/", (req, res) => {
 });
 
 app.post("/hash", (req, res) => {
-  const { data } = req.body;
+  const crypto = require("crypto");
+
+  const data = req.body.data;
 
   if (!data) {
     return res.status(400).json({ error: "No data provided" });
   }
 
-  const hash = crypto.createHash("sha256").update(data).digest("hex");
+  const timestamp = new Date().toISOString();
 
-  res.json({ hash });
-});
+  const hash = crypto
+    .createHash("sha256")
+    .update(data + timestamp)
+    .digest("hex");
 
-const PORT = process.env.PORT || 10000;
+  const proof = {
+    version: "1.0",
+    proof_id: crypto.randomUUID(),
+    timestamp: timestamp,
+    hash_algorithm: "sha256",
+    data_hash: hash
+  };
 
-app.listen(PORT, () => {
-  console.log(`Meridian backend running on port ${PORT}`);
+  res.json(proof);
 });
